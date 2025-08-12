@@ -2,8 +2,8 @@ import os
 import asyncio
 from pathlib import Path
 
-from aiogram import Bot, Dispatcher, Router
-from aiogram.types import Message
+from aiogram import Bot, Dispatcher
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.filters import Command
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
@@ -31,6 +31,16 @@ async def start(message: Message):
 async def add_new_item(message: Message, state: FSMContext):
     await state.set_state(AddProductStates.name)
     await message.answer("Enter item's name")
+
+
+@dp.message(Command('products'))
+async def products_command_handler(message: Message):
+    products = await crud.get_all_products()
+    buttons = [[InlineKeyboardButton(text=p[1], callback_data=f'detail_{p[0]}')] for p in products]
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=buttons
+    )
+    await message.answer("\n".join([p[1] for p in products]), reply_markup=keyboard)
 
 
 @dp.message(AddProductStates.name)
