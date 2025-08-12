@@ -7,6 +7,8 @@ from aiogram.types import Message
 from aiogram.filters import Command
 from dotenv import load_dotenv
 
+import crud
+
 
 CURRENT_PATH = Path(__file__).resolve().parent
 
@@ -27,6 +29,8 @@ async def start(message: Message):
 
 
 async def main():
+    await crud.init_db(DB_FILE_PATH)
+
     bot = Bot(BOT_TOKEN)
     await dp.start_polling(bot)
 
