@@ -5,19 +5,6 @@ import settings
 from models import Product
 
 
-async def init_db():
-    async with aiosqlite.connect(settings.DB_FILE_PATH) as db:
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS products (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                image_url TEXT NOT NULL,
-                price REAL NOT NULL
-            )
-        """)
-        await db.commit()
-
-
 async def add_product(name: str, image_url: str, price: float):
     async with aiosqlite.connect(settings.DB_FILE_PATH) as db:
         await db.execute(

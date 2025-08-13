@@ -9,3 +9,8 @@ dependencies = [
     "aiosqlite>=0.21.0",
     "python-dotenv>=1.1.1",
 ]
+
+[dependency-groups]
+dev = [
+    "faker>=37.5.3",
+]
