@@ -27,10 +27,27 @@ async def add_product(name: str, image_url: str, price: float):
         await db.commit()
 
 
-async def get_all_products() -> List[Product]:
+async def get_products_count() -> int:
     async with aiosqlite.connect(settings.DB_FILE_PATH) as db:
-        async with db.execute("SELECT id, name, image_url, price FROM products") as cursor:
-            return await cursor.fetchall()
+        async with db.execute("SELECT COUNT(*) FROM products") as cursor:
+            row = await cursor.fetchone()
+            return row[0] if row else 0
+
+
+async def get_all_products(limit: int = 8, offset: int = 0) -> List[Product]:
+    limit = max(1, int(limit))
+    offset = max(0, int(offset))
+
+    async with aiosqlite.connect(settings.DB_FILE_PATH) as db:
+        query = """
+            SELECT id, name, image_url, price
+            FROM products
+            ORDER BY id
+            LIMIT ? OFFSET ?
+        """
+        async with db.execute(query, (limit, offset)) as cursor:
+            raw = await cursor.fetchall()
+            return (Product(id=row[0], name=row[1], image_url=row[2], price=row[3]) for row in raw)
 
 
 async def get_product_by_id(product_id: int) -> Optional[Product]:

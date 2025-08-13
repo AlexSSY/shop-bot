@@ -1,3 +1,4 @@
+import math
 import asyncio
 from typing import Optional
 
@@ -38,16 +39,34 @@ async def add_new_item(message: Message, state: FSMContext):
     await message.answer("Enter item's name")
 
 
-async def get_products_navigation_keyboard(page: int) -> Optional[InlineKeyboardMarkup]:
-    products = await crud.get_all_products()
+async def get_products_navigation_keyboard(page: int, per_page: int = 5) -> Optional[InlineKeyboardMarkup]:
+    products_count = await crud.get_products_count()
 
-    if len(products) == 0:
+    if products_count == 0:
         return None
-    
+
+    max_pages = math.ceil(products_count / per_page)
+    page = max(1, min(page, max_pages))  # ограничиваем диапазон
+
+    limit = per_page
+    offset = (page - 1) * per_page
+
+    products = await crud.get_all_products(limit, offset)
+
     buttons = [
-        [InlineKeyboardButton(text=p[1], callback_data=f"detail_{p[0]}")]
+        [InlineKeyboardButton(text=p.name, callback_data=f"detail_{p.id}")]
         for p in products
     ]
+
+    # Кнопки навигации
+    nav_buttons = []
+    if page > 1:
+        nav_buttons.append(InlineKeyboardButton(text="⬅️ Назад", callback_data=f"page_{page - 1}"))
+    if page < max_pages:
+        nav_buttons.append(InlineKeyboardButton(text="Вперёд ➡️", callback_data=f"page_{page + 1}"))
+
+    if nav_buttons:
+        buttons.append(nav_buttons)
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -95,6 +114,23 @@ async def back_to_list_handler(callback: CallbackQuery):
         await callback.message.answer("You do not have any products in your shop.")
         return
     await callback.message.answer('Select your item from list below', reply_markup=keyboard)
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("page_"))
+async def products_page_handler(callback: CallbackQuery):
+    # Извлекаем номер страницы
+    page = int(callback.data.split("_")[1])
+
+    # Получаем клавиатуру для новой страницы
+    keyboard = await get_products_navigation_keyboard(page)
+
+    # Если у тебя сообщение с текстом (без фото):
+    await callback.message.edit_text(
+        text="Select your item from list below",
+        reply_markup=keyboard
+    )
+
     await callback.answer()
 
 
