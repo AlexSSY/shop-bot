@@ -88,7 +88,9 @@ async def product_detail_handler(callback: CallbackQuery):
     if product is not None:
         back_kb = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_list")]
+                [InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit_{product_id}")],
+                [InlineKeyboardButton(text="🗑 Удалить", callback_data=f"delete_{product_id}")],
+                [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_list")],
             ]
         )
         # Отправляем фото с подписью
