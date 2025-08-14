@@ -75,7 +75,7 @@ async def product_detail_handler(callback: CallbackQuery):
         back_kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit_{product_id}")],
-                [InlineKeyboardButton(text="🗑 Удалить", callback_data=f"delete_{product_id}")],
+                [InlineKeyboardButton(text="🗑 Удалить", callback_data=f"delete_{page}_{product_id}")],
                 [InlineKeyboardButton(text="⬅️ Венрнуться к списку", callback_data=f"page_{page}")],
             ]
         )
