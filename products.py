@@ -82,7 +82,7 @@ async def product_detail_handler(callback: CallbackQuery):
         # Отправляем фото с подписью
         await callback.message.edit_media(
             media=InputMediaPhoto(
-                media=product.image_url,
+                media=product.image_id,
                 caption=f"Name: {product.name}\n\nPrice: {product.price}$"
             ),
             reply_markup=back_kb,

@@ -5,5 +5,5 @@ from dataclasses import dataclass
 class Product:
     id: int
     name: str
-    image_url: str
+    image_id: str
     price: float

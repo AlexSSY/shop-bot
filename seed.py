@@ -17,7 +17,7 @@ async def seed():
     for _ in range(25):
         await crud.add_product(
             name=fake.name_nonbinary(),
-            image_url='AgACAgIAAxkBAAMhaJtOO4COGRLHm325QKha7bn9i8cAAkkDMhum1eBIOsMjyypju6gBAAMCAAN5AAM2BA',
+            image_id='AgACAgIAAxkBAAMhaJtOO4COGRLHm325QKha7bn9i8cAAkkDMhum1eBIOsMjyypju6gBAAMCAAN5AAM2BA',
             price=random.random()
         )
 

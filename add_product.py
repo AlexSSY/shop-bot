@@ -12,7 +12,7 @@ router = Router(name='add_product_router')
 
 class AddProductStates(StatesGroup):
     name = State()
-    image_url = State()
+    image_id = State()
     price = State()
 
 
@@ -26,14 +26,14 @@ async def add_new_item(message: Message, state: FSMContext):
 async def process_add_product_name(message: Message, state: FSMContext):
     name = message.text.strip()
     await state.update_data(name=name)
-    await state.set_state(AddProductStates.image_url)
+    await state.set_state(AddProductStates.image_id)
     await message.answer("Send to me item's image")
 
 
-@router.message(AddProductStates.image_url)
+@router.message(AddProductStates.image_id)
 async def process_add_product_image(message: Message, state: FSMContext):
-    image_url = message.photo[-1].file_id
-    await state.update_data(image_url=image_url)
+    image_id = message.photo[-1].file_id
+    await state.update_data(image_id=image_id)
     await state.set_state(AddProductStates.price)
     await message.answer("Send to me item's price")
 
