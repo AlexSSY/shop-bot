@@ -9,6 +9,7 @@ import settings
 import add_product
 import products
 import delete_product
+import edit_product
 
 
 dp = Dispatcher(storage=MemoryStorage())
@@ -24,6 +25,7 @@ async def main():
     dp.include_router(add_product.router)
     dp.include_router(products.router)
     dp.include_router(delete_product.router)
+    dp.include_router(edit_product.router)
     await dp.start_polling(bot)
 
 
