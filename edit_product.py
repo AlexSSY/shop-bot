@@ -4,6 +4,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
 import crud
+import shared
 
 
 router = Router(name='edit_product_router')
@@ -49,3 +50,8 @@ async def process_add_product_price(message: Message, state: FSMContext):
     await crud.update_product(**item_data)
     await message.answer("Product successfully updated.")
     await state.clear()
+    product_id = item_data.get('product_id')
+    product = await crud.get_product_by_id(product_id)
+    product_text = await shared.get_product_detail_text(product)
+    product_keyboard = await shared.get_product_detail_keyboard(product)
+    await message.answer_photo(photo=product.image_id, caption=product_text, reply_markup=product_keyboard)
