@@ -14,6 +14,8 @@ from aiogram.filters import Command
 
 import crud
 import assets
+import shared
+
 
 router = Router(name='products')
 
@@ -72,18 +74,13 @@ async def product_detail_handler(callback: CallbackQuery):
     product = await crud.get_product_by_id(product_id)
 
     if product is not None:
-        back_kb = InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit_{product_id}")],
-                [InlineKeyboardButton(text="🗑 Удалить", callback_data=f"delete_{page}_{product_id}")],
-                [InlineKeyboardButton(text="⬅️ Венрнуться к списку", callback_data=f"page_{page}")],
-            ]
-        )
+        product_detail_text = await shared.get_product_detail_text(product)
+        back_kb = await shared.get_product_detail_keyboard(product, page)
         # Отправляем фото с подписью
         await callback.message.edit_media(
             media=InputMediaPhoto(
                 media=product.image_id,
-                caption=f"Name: {product.name}\n\nPrice: {product.price}$"
+                caption=product_detail_text
             ),
             reply_markup=back_kb,
         )

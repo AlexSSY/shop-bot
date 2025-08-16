@@ -5,13 +5,14 @@ import settings
 from models import Product
 
 
-async def add_product(name: str, image_id: str, price: float):
+async def add_product(name: str, image_id: str, price: float) -> Optional[int]:
     async with aiosqlite.connect(settings.DB_FILE_PATH) as db:
-        await db.execute(
+        cursor = await db.execute(
             "INSERT INTO products (name, image_id, price) VALUES (?, ?, ?)",
             (name, image_id, price)
         )
         await db.commit()
+        return cursor.lastrowid
 
 
 async def get_products_count() -> int:
